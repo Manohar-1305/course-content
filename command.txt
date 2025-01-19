@@ -1,5 +1,6 @@
 apt  install docker.io -y
-docker docker build -t course-website .
+sudo docker build -t course-content .
+
 docker run -d -p 5000:5000 manoharshetty507/course-website:v1
 
 push to dockerhub
