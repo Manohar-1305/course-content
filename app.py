@@ -361,7 +361,10 @@ def modification():
 def loadbalancer_svc():
     # Replace with appropriate logic
     return render_template('loadbalancer_svc.html')
-
+@app.route('/mapping_domain')
+def mapping_domain():
+    # Replace with appropriate logic
+    return render_template('mapping_domain.html')
 #######################################
 @app.route('/provider_blog')
 def provider_blog():
