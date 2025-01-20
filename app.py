@@ -427,4 +427,4 @@ def code_review():
     # Replace with appropriate logic
     return render_template('code_review.html')
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)
