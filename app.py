@@ -426,5 +426,10 @@ def eks_bastion_creation():
 def code_review():
     # Replace with appropriate logic
     return render_template('code_review.html')
+
+@app.route('/health')
+def health_check():
+    return 'OK', 200
+    
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
