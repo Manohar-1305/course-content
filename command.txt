@@ -1,9 +1,9 @@
 apt  install docker.io -y
 sudo docker build -t course-content .
 
-docker run -d -p 5000:5000 manoharshetty507/course-website:v1
+sudo docker run -d -p 5000:5000 manoharshetty507/course-website:v1
 
 push to dockerhub
-docker tag course-content manoharshetty507/course-website:v1
-docker login
-docker push manoharshetty507/course-website:v1
+sudo docker tag course-content manoharshetty507/course-website:v1
+sudo docker login
+sudo docker push manoharshetty507/course-website:v1
