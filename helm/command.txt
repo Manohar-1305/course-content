@@ -1,3 +1,4 @@
 helm create course-website
 helm install myapp ./course-website  
 helm package ./course-website
+ helm repo add my-repo https://github.com/Manohar-1305/course-content/raw/main/helm/
