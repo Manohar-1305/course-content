@@ -9,6 +9,12 @@ pipeline {
     }
 
     stages {
+            stage("Cleanup Workspace"){
+            steps {
+                cleanWs()
+            }
+
+        }
         stage('Checkout') {
             steps {
                 // Checkout the code from your repository
@@ -84,8 +90,8 @@ stage('Push Docker Image to Docker Hub') {
 
             // Push the image to Docker Hub
             sh 'docker push manoharshetty507/$IMAGE_NAME:$IMAGE_TAG'
-          }
+                }
+            }
         }
-      }
-    }   
+    }
 }
