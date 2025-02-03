@@ -3,16 +3,16 @@ from app import app
 
 @pytest.fixture
 def client():
-    # Set up a test client for the app
+    """Fixture to set up a test client for the app."""
     app.testing = True
     with app.test_client() as client:
-        yield client
+        yield client  # This will provide the client to the test functions
 
-# Test the login page (GET request)
 def test_login_page_get(client):
+    """Test the login page (GET request)."""
     response = client.get('/login')
     assert response.status_code == 200
-    assert b'Login' in response.data  # Check if 'Login' appears in the response
+    assert b'Login' in response.data  
     
     # Test login functionality with valid credentials (POST request)
 def test_login_valid(self):
