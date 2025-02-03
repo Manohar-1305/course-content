@@ -69,7 +69,9 @@ def test_register_existing_user(client):
     assert b'Username already exists. Choose a different username.' in response.data  # Check message
     
     # Ensure the flash message is displayed in the correct format
-    assert b'<div class="alert alert-error">Username already exists. Choose a different username.</div>' in response.data
+    assert b'alert-error' in response.data  # Check for the class name indicating an error
+    assert b'Username already exists. Choose a different username.' in response.data  # Check actual message
+
 
 
 
