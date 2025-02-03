@@ -79,3 +79,21 @@ p a {
 p a:hover {
   text-decoration: underline;
 }
+.alert {
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.danger {
+    color: red;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+}
+
+.success {
+    color: green;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+}
+
