@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import os
+from flask import flash, redirect, render_template, request, url_for
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -36,18 +37,21 @@ def login():
 
 
 # Route for the register page
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
         if username in users:
-            flash('Username already exists. Choose a different username.', 'danger')
+            flash('Username already exists. Choose a different username.', 'danger')  # 'danger' for error
         else:
             users[username] = password
             flash('Registration successful! You can now log in.', 'success')
             return redirect(url_for('login'))
     return render_template('register.html')
+
 
 
 
