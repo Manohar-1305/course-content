@@ -52,7 +52,7 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
+        stage('Run Unit Tests') {
             steps {
                 script {
                     // Run unit tests using pytest
