@@ -6,7 +6,7 @@ pipeline {
         VIRTUAL_ENV = '.venv'  // Virtual environment folder
         IMAGE_NAME = 'course-webapp'
         IMAGE_TAG = 'v1' // Default tag for staging
-        ENVIRONMENT = 'poc'  // Set your environment here (e.g., 'poc', 'prod')
+        ENVIRONMENT = 'dev'  // Set your environment here (e.g., 'poc', 'prod')
     }
 
     stages {
@@ -21,7 +21,7 @@ pipeline {
                 script {
                     try {
                         def property = readYaml file: "config.yaml"
-                        if (ENVIRONMENT == "poc") {
+                        if (ENVIRONMENT == "dev") {
                             config = property.poc
                             echo "Using configuration for POC: ${config}"
                         } else {
