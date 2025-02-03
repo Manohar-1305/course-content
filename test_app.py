@@ -54,8 +54,9 @@ def test_register_new_user(client):
     # Check if the status code is 302 (Redirect)
     assert response.status_code == 302
     
-    # Check if the redirect location is '/login'
-    assert response.location == 'http://localhost/login'
+    # Check if the redirect location is '/login' (relative path)
+    assert response.location.endswith('/login')
+
 
 
 def test_register_existing_user(client):
