@@ -18,12 +18,13 @@ def test_login_invalid(client):
     """Test login functionality with invalid credentials (POST request)."""
     response = client.post('/login', data={'username': 'admin', 'password': 'wrongpassword'})
     assert response.status_code == 200  # Should stay on the login page
-    assert b'Invalid password. Please try again.' in response.data  # Check for error message
+    assert b'Invalid password. Please try again.' in response.data  # Check for the correct error message
 
     # Alternatively, if you want to check for "User not found":
     response = client.post('/login', data={'username': 'nonexistent', 'password': 'wrongpassword'})
     assert response.status_code == 200  # Should stay on the login page
-    assert b'User not found. Please register.' in response.data  # Check for error message
+    assert b'User not found. Please register.' in response.data  # Check for the correct error message
+
 
 
 
