@@ -33,6 +33,7 @@ def login():
 
 
 
+
 # Route for the register page
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -46,6 +47,7 @@ def register():
             flash('Registration successful! You can now log in.', 'success')
             return redirect(url_for('login'))
     return render_template('register.html')
+
 
 # Route for the welcome page
 @app.route('/welcome', methods=['GET', 'POST'])
