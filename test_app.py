@@ -58,12 +58,12 @@ def test_register_new_user(client):
     assert response.location.endswith('/login')
 
 
-
 def test_register_existing_user(client):
     """Test register functionality with existing username (POST request)."""
     response = client.post('/register', data={'username': 'admin', 'password': 'password123'})
     assert response.status_code == 200
-    assert b'Username already exists. Choose a different username.' in response.data
+    assert b'Username already exists. Choose a different username.' in response.data  # Check the message
+
 
 def test_welcome_page_get(client):
     """Test the welcome page (GET request)."""
