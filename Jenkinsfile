@@ -6,18 +6,44 @@ pipeline {
         VIRTUAL_ENV = '.venv'  // Virtual environment folder
         IMAGE_NAME = 'course-webapp'
         IMAGE_TAG = 'v1' // Default tag for staging
+        ENVIRONMENT = 'poc'  // Set your environment here (e.g., 'poc', 'prod')
     }
 
     stages {
-            stage("Cleanup Workspace"){
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/Manohar-1305/course-content.git'
+            }
+        }
+
+        stage("Load Configurations") {
+            steps {
+                script {
+                    try {
+                        def property = readYaml file: "config.yaml"
+                        if (ENVIRONMENT == "poc") {
+                            config = property.poc
+                            echo "Using configuration for POC: ${config}"
+                        } else {
+                            config = property.default
+                            echo "Using default configuration: ${config}"
+                        }
+                    } catch (Exception e) {
+                        echo "Failed to read config.yaml: ${e.getMessage()}"
+                        error "Pipeline failed due to YAML read error"
+                    }
+                }
+            }
+        }
+
+        stage("Cleanup Workspace") {
             steps {
                 cleanWs()
             }
-
         }
-        stage('Checkout') {
+
+        stage('Checkout Code') {
             steps {
-                // Checkout the code from your repository
                 git credentialsId: 'your-credentials-id', branch: 'main', url: 'https://github.com/Manohar-1305/course-content.git'
             }
         }
@@ -25,7 +51,6 @@ pipeline {
         stage('Install python3-venv') {
             steps {
                 script {
-                    // Use sudo for apt-get commands
                     sh 'sudo apt-get update'
                     sh 'sudo apt-get install -y python3-venv'
                 }
@@ -35,7 +60,6 @@ pipeline {
         stage('Set Up Virtual Environment') {
             steps {
                 script {
-                    // Create and activate the virtual environment
                     sh 'python3 -m venv $VIRTUAL_ENV'
                     sh '$VIRTUAL_ENV/bin/pip install --upgrade pip'
                 }
@@ -45,7 +69,6 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
-                    // Install the necessary dependencies
                     sh '$VIRTUAL_ENV/bin/pip install -r requirements.txt'
                     sh '.venv/bin/pip install pytest'
                 }
@@ -55,7 +78,6 @@ pipeline {
         stage('Run Unit Tests') {
             steps {
                 script {
-                    // Run unit tests using pytest
                     sh '$VIRTUAL_ENV/bin/pytest --maxfail=1 --disable-warnings -q'
                 }
             }
@@ -64,34 +86,38 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build Docker image with the name 'course-webapp'
                     sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
                 }
             }
         }
-stage('Trivy Scan') {
-    steps {
-        script {
-            // Run Trivy image scan on the locally built Docker image
-            sh 'trivy image --format table -o trivy-image-report.html $IMAGE_NAME:$IMAGE_TAG'
-        }
-    }
-}
-stage('Push Docker Image to Docker Hub') {
-    steps {
-        script {
-            // Login to Docker Hub using Jenkins credentials (docker-cred)
-            withCredentials([usernamePassword(credentialsId: 'docker-cred', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                sh 'echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin'
+
+        stage('Trivy Scan') {
+            steps {
+                script {
+                    sh 'trivy image --format table -o trivy-image-report.html $IMAGE_NAME:$IMAGE_TAG'
+                }
             }
+        }
 
-            // Tag the local image with Docker Hub repository and tag
-            sh 'docker tag $IMAGE_NAME:$IMAGE_TAG manoharshetty507/$IMAGE_NAME:$IMAGE_TAG'
-
-            // Push the image to Docker Hub
-            sh 'docker push manoharshetty507/$IMAGE_NAME:$IMAGE_TAG'
+        stage('Push Docker Image to Docker Hub') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'docker-cred', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh 'echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin'
+                    }
+                    sh 'docker tag $IMAGE_NAME:$IMAGE_TAG manoharshetty507/$IMAGE_NAME:$IMAGE_TAG'
+                    sh 'docker push manoharshetty507/$IMAGE_NAME:$IMAGE_TAG'
+                }
+            }
+        }
+                    stage('Prune Docker Images') {
+    steps {
+        script {
+            // Run the Docker prune command to remove unused Docker images, containers, and volumes
+            sh 'docker system prune -af --volumes'
                 }
             }
         }
     }
 }
+
