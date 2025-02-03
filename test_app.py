@@ -15,11 +15,17 @@ class FlaskAppTestCase(unittest.TestCase):
         self.assertIn(b'Login', response.data)  # Check if 'Login' appears in the response
     
     # Test login functionality with valid credentials (POST request)
-    def test_login_valid(self):
-        with self.app:
-            response = self.app.post('/login', data={'username': 'admin', 'password': 'password123'})
-            self.assertEqual(response.status_code, 302)  # Should redirect to welcome page
-            self.assertIn(b'Welcome', response.data)  # Check if 'Welcome' appears in the response
+def test_login_valid(self):
+    with self.app:
+        # Perform login and check redirect
+        response = self.app.post('/login', data={'username': 'admin', 'password': 'password123'})
+        self.assertEqual(response.status_code, 302)  # Should redirect to welcome page
+
+        # Follow the redirect
+        response = self.app.get(response.headers['Location'])
+        self.assertEqual(response.status_code, 200)  # Should load the welcome page
+        self.assertIn(b'Welcome', response.data)  # Check if 'Welcome' appears in the response
+
     
     # Test login functionality with invalid credentials (POST request)
 def test_login_valid(self):
