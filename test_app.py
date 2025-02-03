@@ -1,18 +1,18 @@
-import unittest
+import pytest
 from app import app
 
-class FlaskAppTestCase(unittest.TestCase):
-    
+@pytest.fixture
+def client():
     # Set up a test client for the app
-    def setUp(self):
-        self.app = app.test_client()
-        self.app.testing = True
-    
-    # Test the login page (GET request)
-    def test_login_page_get(self):
-        response = self.app.get('/login')
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Login', response.data)  # Check if 'Login' appears in the response
+    app.testing = True
+    with app.test_client() as client:
+        yield client
+
+# Test the login page (GET request)
+def test_login_page_get(client):
+    response = client.get('/login')
+    assert response.status_code == 200
+    assert b'Login' in response.data  # Check if 'Login' appears in the response
     
     # Test login functionality with valid credentials (POST request)
 def test_login_valid(self):
