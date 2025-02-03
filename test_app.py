@@ -16,9 +16,10 @@ def test_login_page_get(client):
 
 def test_login_invalid(client):
     """Test login functionality with invalid credentials (POST request)."""
-    response = client.post('/login', data={'username': 'admin', 'password': 'password123'})
+    response = client.post('/login', data={'username': 'admin', 'password': 'wrongpassword'})
     assert response.status_code == 200  # Should stay on the login page
     print(response.data)  # Print the HTML to inspect it
+
 
 
     # Follow the redirect
