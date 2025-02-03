@@ -64,11 +64,13 @@ def test_register_existing_user(client):
     
     # Ensure that the response status is 200 (page not redirected)
     assert response.status_code == 200
-
+    
     # Check if the error message appears within the response data
     assert b'Username already exists. Choose a different username.' in response.data  # Check message
-    # Optionally, check if the flash message is within a specific HTML element
+    # Check if the flash message appears in the expected format
     assert b'<div class="alert alert-error">Username already exists. Choose a different username.</div>' in response.data
+
+
 
 
 
