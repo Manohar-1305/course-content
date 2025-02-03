@@ -50,8 +50,13 @@ def test_register_page_get(client):
 def test_register_new_user(client):
     """Test register functionality with new username (POST request)."""
     response = client.post('/register', data={'username': 'newuser', 'password': 'newpassword'})
-    assert response.status_code == 302  # Should redirect to login page
-    assert b'Registration successful!' in response.data
+    
+    # Check if the status code is 302 (Redirect)
+    assert response.status_code == 302
+    
+    # Check if the redirect location is '/login'
+    assert response.location == 'http://localhost/login'
+
 
 def test_register_existing_user(client):
     """Test register functionality with existing username (POST request)."""
