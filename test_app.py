@@ -38,7 +38,8 @@ def test_login_invalid(client):
     """Test login functionality with invalid credentials (POST request)."""
     response = client.post('/login', data={'username': 'admin', 'password': 'wrongpassword'})
     assert response.status_code == 200  # Should stay on the login page
-    assert b'Invalid credentials' in response.data  # Check error message
+    assert b'Invalid password. Please try again.' in response.data  # Check error message
+
 
 def test_register_page_get(client):
     """Test the register page (GET request)."""
