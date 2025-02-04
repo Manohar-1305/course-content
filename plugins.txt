@@ -1,5 +1,6 @@
-Docker Commons Plugin
+Docker Commons 
 Docker Pipeline
-Pipeline: Stage View Plugin
+Pipeline: Stage View 
 Web for Blue Ocean
-Workspace Cleanup Plugin
+Workspace Cleanup 
+Snyk Security
