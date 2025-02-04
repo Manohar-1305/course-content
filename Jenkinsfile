@@ -8,15 +8,14 @@ pipeline {
         IMAGE_TAG = 'v1' // Default tag for staging
         ENVIRONMENT = 'dev'  // Set your environment here (e.g., 'poc', 'prod')
     }
-
-    stages {
+stages {
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/Manohar-1305/course-content.git'
             }
         }
 
-        stage("Load Configurations") {
+stage("Load Configurations") {
             steps {
                 script {
                     try {
@@ -36,19 +35,17 @@ pipeline {
             }
         }
 
-        stage("Cleanup Workspace") {
+stage("Cleanup Workspace") {
             steps {
                 cleanWs()
             }
         }
-
-        stage('Checkout Code') {
+stage('Checkout Code') {
             steps {
                 git credentialsId: 'your-credentials-id', branch: 'main', url: 'https://github.com/Manohar-1305/course-content.git'
             }
         }
-
-        stage('Install python3-venv') {
+stage('Install python3-venv') {
             steps {
                 script {
                     sh 'sudo apt-get update'
@@ -56,8 +53,7 @@ pipeline {
                 }
             }
         }
-
-        stage('Set Up Virtual Environment') {
+stage('Set Up Virtual Environment') {
             steps {
                 script {
                     sh 'python3 -m venv $VIRTUAL_ENV'
@@ -66,7 +62,7 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
+stage('Install Dependencies') {
             steps {
                 script {
                     sh '$VIRTUAL_ENV/bin/pip install -r requirements.txt'
@@ -75,7 +71,7 @@ pipeline {
             }
         }
 
-        stage('Run Unit Tests') {
+stage('Run Unit Tests') {
             steps {
                 script {
                     sh '$VIRTUAL_ENV/bin/pytest --maxfail=1 --disable-warnings -q'
@@ -83,7 +79,7 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+stage('Build Docker Image') {
             steps {
                 script {
                     sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
@@ -91,7 +87,7 @@ pipeline {
             }
         }
 
-        stage('Trivy Scan') {
+stage('Trivy Scan') {
             steps {
                 script {
                     sh 'trivy image --format table -o trivy-image-report.html $IMAGE_NAME:$IMAGE_TAG'
@@ -99,7 +95,7 @@ pipeline {
             }
         }
 
-        stage('Push Docker Image to Docker Hub') {
+stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'docker-cred', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
@@ -110,7 +106,7 @@ pipeline {
                 }
             }
         }
-                    stage('Prune Docker Images') {
+stage('Prune Docker Images') {
     steps {
         script {
             // Run the Docker prune command to remove unused Docker images, containers, and volumes
