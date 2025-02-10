@@ -32,13 +32,6 @@ def login():
 
     return render_template('login.html')
 
-
-
-
-
-# Route for the register page
-
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -52,10 +45,6 @@ def register():
             return redirect(url_for('login'))
     return render_template('register.html')
 
-
-
-
-# Route for the welcome page
 @app.route('/welcome', methods=['GET', 'POST'])
 def welcome():
     if 'username' not in session:
@@ -89,8 +78,6 @@ def welcome():
         subscribed=session.get('subscribed', False)
     )
 
-
-
 @app.route('/course')
 def course():
     if 'username' not in session:
@@ -101,9 +88,6 @@ def course():
         return redirect(url_for('subscribe'))  # Redirect to subscription page if not subscribed
 
     return render_template('course.html')  # Render the course page
-
-
-
 
 @app.route('/subscribe', methods=['GET', 'POST'])
 def subscribe():
@@ -118,8 +102,6 @@ def subscribe():
     
     return render_template('subscription.html')
 
-
-
 # Route for the home page
 @app.route('/home')
 def home():
@@ -133,7 +115,6 @@ def home():
         subscribed_message = "Please subscribe to access the course."
     
     return render_template('home.html', username=session['username'], subscribed_message=subscribed_message)
-
 
 # Route to log out
 @app.route('/logout')
