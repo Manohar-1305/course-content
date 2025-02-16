@@ -15,26 +15,6 @@ stages {
             }
         }
 
-stage("Load Configurations") {
-            steps {
-                script {
-                    try {
-                        def property = readYaml file: "config.yaml"
-                        if (ENVIRONMENT == "dev") {
-                            config = property.poc
-                            echo "Using configuration for POC: ${config}"
-                        } else {
-                            config = property.default
-                            echo "Using default configuration: ${config}"
-                        }
-                    } catch (Exception e) {
-                        echo "Failed to read config.yaml: ${e.getMessage()}"
-                        error "Pipeline failed due to YAML read error"
-                    }
-                }
-            }
-        }
-
 stage("Cleanup Workspace") {
             steps {
                 cleanWs()
