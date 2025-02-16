@@ -8,4 +8,6 @@ sudo docker tag course-content manoharshetty507/course-website:v1
 sudo docker login
 sudo docker push manoharshetty507/course-website:v1
 
+sudo chmod 666 /var/run/docker.sock
+
  echo "jenkins ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/jenkins && sudo chmod 440 /etc/sudoers.d/jenkins && sudo visudo -c
