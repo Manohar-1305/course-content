@@ -2,30 +2,35 @@ pipeline {
     agent any
 
     environment {
-        FLASK_APP = 'app.py'  // Replace with the actual Flask app file
-        VIRTUAL_ENV = '.venv'  // Virtual environment folder
-        IMAGE_NAME = 'course-webapp'
-        IMAGE_TAG = 'v1' // Default tag for staging
-        ENVIRONMENT = 'dev'  // Set your environment here (e.g., 'poc', 'prod')
+        FLASK_APP = 'app.py'
+        VIRTUAL_ENV = '.venv'
+        IMAGE_NAME = 'course-web-app'
+        IMAGE_TAG = 'v2'
+        ENVIRONMENT = 'dev'
     }
-stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'main', url: 'https://github.com/Manohar-1305/course-content.git'
-            }
-        }
 
-stage("Cleanup Workspace") {
+    stages {
+        stage("Cleanup Workspace") {
             steps {
                 cleanWs()
             }
         }
-stage('Checkout Code') {
+
+        stage('Checkout Code') {
             steps {
                 git credentialsId: 'your-credentials-id', branch: 'main', url: 'https://github.com/Manohar-1305/course-content.git'
             }
         }
-stage('Install python3-venv') {
+
+        stage('Verify Files in Workspace') {
+            steps {
+                script {
+                    sh 'ls -l'
+                }
+            }
+        }
+
+        stage('Install python3-venv') {
             steps {
                 script {
                     sh 'sudo apt-get update'
@@ -33,7 +38,8 @@ stage('Install python3-venv') {
                 }
             }
         }
-stage('Set Up Virtual Environment') {
+
+        stage('Set Up Virtual Environment') {
             steps {
                 script {
                     sh 'python3 -m venv $VIRTUAL_ENV'
@@ -42,16 +48,16 @@ stage('Set Up Virtual Environment') {
             }
         }
 
-stage('Install Dependencies') {
+        stage('Install Dependencies') {
             steps {
                 script {
-                    sh '$VIRTUAL_ENV/bin/pip install -r requirements.txt'
-                    sh '.venv/bin/pip install pytest'
+                    sh '$VIRTUAL_ENV/bin/pip install -r requirements.txt || ls -l'
+                    sh '$VIRTUAL_ENV/bin/pip install pytest'
                 }
             }
         }
 
-stage('Run Unit Tests') {
+        stage('Run Unit Tests') {
             steps {
                 script {
                     sh '$VIRTUAL_ENV/bin/pytest --maxfail=1 --disable-warnings -q'
@@ -59,7 +65,7 @@ stage('Run Unit Tests') {
             }
         }
 
-stage('Build Docker Image') {
+        stage('Build Docker Image') {
             steps {
                 script {
                     sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
@@ -67,7 +73,7 @@ stage('Build Docker Image') {
             }
         }
 
-stage('Trivy Scan') {
+        stage('Trivy Scan') {
             steps {
                 script {
                     sh 'trivy image --format table -o trivy-image-report.html $IMAGE_NAME:$IMAGE_TAG'
@@ -75,7 +81,7 @@ stage('Trivy Scan') {
             }
         }
 
-stage('Push Docker Image to Docker Hub') {
+        stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'docker-cred', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
@@ -86,14 +92,13 @@ stage('Push Docker Image to Docker Hub') {
                 }
             }
         }
-stage('Prune Docker Images') {
-    steps {
-        script {
-            // Run the Docker prune command to remove unused Docker images, containers, and volumes
-            sh 'docker system prune -af --volumes'
+
+        stage('Prune Docker Images') {
+            steps {
+                script {
+                    sh 'docker system prune -af --volumes'
                 }
             }
         }
     }
 }
-
