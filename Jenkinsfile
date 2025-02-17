@@ -2,14 +2,21 @@ pipeline {
     agent any
 
     environment {
-        FLASK_APP = 'app.py'
-        VIRTUAL_ENV = '.venv'
+        FLASK_APP = 'app.py'  
+        VIRTUAL_ENV = '.venv'  
         IMAGE_NAME = 'course-web-app'
-        IMAGE_TAG = 'v2'
-        ENVIRONMENT = 'dev'
+        IMAGE_TAG = 'v2' 
+        ENVIRONMENT = 'dev'  
+        SCANNER_HOME = '/bin'
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/Manohar-1305/course-content.git'
+            }
+        }
+
         stage("Cleanup Workspace") {
             steps {
                 cleanWs()
@@ -19,14 +26,6 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 git credentialsId: 'your-credentials-id', branch: 'main', url: 'https://github.com/Manohar-1305/course-content.git'
-            }
-        }
-
-        stage('Verify Files in Workspace') {
-            steps {
-                script {
-                    sh 'ls -l'
-                }
             }
         }
 
@@ -64,6 +63,37 @@ pipeline {
                 }
             }
         }
+        stage('Debug Sonar Path') {
+            steps {
+                script {
+                    sh 'echo "SONAR_SCANNER_HOME is: $SONAR_SCANNER_HOME"'
+                    sh 'ls -l $SONAR_SCANNER_HOME/bin'
+                }
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('sonar-server') {
+                    script {
+                        sh '''
+                        /opt/sonar-scanner/bin/sonar-scanner \
+                        -Dsonar.projectName=Flaskapp \
+                        -Dsonar.projectKey=Flaskapp
+                        '''
+                    }
+                }
+            }
+        }
+
+
+        stage('Quality Gate') {
+            steps {
+                script {
+                    waitForQualityGate abortPipeline: false, credentialsId: 'Sonar-token'
+                }
+            }
+        }
 
         stage('Build Docker Image') {
             steps {
@@ -84,7 +114,7 @@ pipeline {
         stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'docker-cred', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    withCredentials([usernamePassword(credentialsId: 'docker-creds', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         sh 'echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin'
                     }
                     sh 'docker tag $IMAGE_NAME:$IMAGE_TAG manoharshetty507/$IMAGE_NAME:$IMAGE_TAG'
