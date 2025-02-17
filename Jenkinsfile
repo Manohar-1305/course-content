@@ -2,11 +2,11 @@ pipeline {
     agent any
 
     environment {
-        FLASK_APP = 'app.py'  
-        VIRTUAL_ENV = '.venv'  
+        FLASK_APP = 'app.py'  // Replace with the actual Flask app file
+        VIRTUAL_ENV = '.venv'  // Virtual environment folder
         IMAGE_NAME = 'course-web-app'
-        IMAGE_TAG = 'v2' 
-        ENVIRONMENT = 'dev'  
+        IMAGE_TAG = 'v2' // Default tag for staging
+        ENVIRONMENT = 'dev'  // Set your environment here (e.g., 'poc', 'prod')
         SCANNER_HOME = '/opt/sonar-scanner'
     }
 
@@ -55,7 +55,12 @@ pipeline {
                 }
             }
         }
-
+        stage('OWASP FS Scan') {
+            steps {
+                dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+            }
+        }
         stage('Run Unit Tests') {
             steps {
                 script {
@@ -63,28 +68,28 @@ pipeline {
                 }
             }
         }
-        stage('Debug Sonar Path') {
-            steps {
-                script {
-                    sh 'echo "SONAR_SCANNER_HOME is: $SONAR_SCANNER_HOME"'
-                    sh 'ls -l $SONAR_SCANNER_HOME/bin'
-                }
-            }
+stage('Debug Sonar Path') {
+    steps {
+        script {
+            sh 'echo "SONAR_SCANNER_HOME is: $SONAR_SCANNER_HOME"'
+            sh 'ls -l $SONAR_SCANNER_HOME/bin'
         }
+    }
+}
 
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('sonar-server') {
-                    script {
-                        sh '''
-                        /opt/sonar-scanner/bin/sonar-scanner \
-                        -Dsonar.projectName=Flaskapp \
-                        -Dsonar.projectKey=Flaskapp
-                        '''
-                    }
-                }
+stage('SonarQube Analysis') {
+    steps {
+        withSonarQubeEnv('sonar-server') {
+            script {
+                sh '''
+                /opt/sonar-scanner/bin/sonar-scanner \
+                -Dsonar.projectName=Flaskapp \
+                -Dsonar.projectKey=Flaskapp
+                '''
             }
         }
+    }
+}
 
 
         stage('Quality Gate') {
