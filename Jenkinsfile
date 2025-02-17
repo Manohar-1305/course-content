@@ -7,7 +7,7 @@ pipeline {
         IMAGE_NAME = 'course-web-app'
         IMAGE_TAG = 'v2' 
         ENVIRONMENT = 'dev'  
-        SCANNER_HOME = '/bin'
+        SCANNER_HOME = '/opt/sonar-scanner'
     }
 
     stages {
