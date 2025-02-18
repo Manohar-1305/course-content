@@ -5,4 +5,4 @@ Web for Blue Ocean
 Workspace Cleanup 
 Snyk Security
 Pipeline Utility Steps
-Sonar scanner
+SonarQube Scanner
