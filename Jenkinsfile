@@ -5,7 +5,7 @@ pipeline {
         FLASK_APP = 'app.py'  // Replace with the actual Flask app file
         VIRTUAL_ENV = '.venv'  // Virtual environment folder
         IMAGE_NAME = 'course-web-app'
-        IMAGE_TAG = 'v2' // Default tag for staging
+        IMAGE_TAG = 'v3' // Default tag for staging
         ENVIRONMENT = 'dev'  // Set your environment here (e.g., 'poc', 'prod')
         SCANNER_HOME = '/opt/sonar-scanner'
     }
