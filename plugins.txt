@@ -6,3 +6,6 @@ Workspace Cleanup
 Snyk Security
 Pipeline Utility Steps
 SonarQube Scanner
+Dependency
+
+Tools -> Dependency->DP-Check-installation-automatic
