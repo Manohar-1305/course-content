@@ -127,7 +127,16 @@ stage('SonarQube Analysis') {
                 }
             }
         }
-
+        // New Stage to Run Docker Container
+        stage('Run Docker Container') {
+            steps {
+                script {
+                    sh '''
+                    docker run -d --name course-web-container -p 5000:5000 $IMAGE_NAME:$IMAGE_TAG
+                    '''
+                }
+            }
+        }
         stage('Prune Docker Images') {
             steps {
                 script {
