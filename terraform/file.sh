@@ -71,6 +71,9 @@ ExecStart=/home/ubuntu/app/venv/bin/python3 /home/ubuntu/app/course-content/app.
 WantedBy=multi-user.target
 EOF' && log_message "Systemd service created successfully" || log_message "Service creation failed"
 
+sudo touch /home/ubuntu/app/course-content/app.log
+sudo chown ubuntu:ubuntu /home/ubuntu/app/course-content/app.log
+sudo chmod 666 /home/ubuntu/app/course-content/app.log
 # Reload systemd and enable the service
 log_message "Reloading systemd and enabling Flask app service..."
 sudo systemctl daemon-reload && log_message "Systemd daemon reloaded" || log_message "Daemon reload failed"
