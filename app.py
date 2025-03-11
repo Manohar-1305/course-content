@@ -1,8 +1,23 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import os
 from flask import flash, redirect, render_template, request, url_for
-
+import logging
 app = Flask(__name__)
+
+
+# Configure logging
+logging.basicConfig(filename='app.log', level=logging.INFO, 
+                    format='%(asctime)s - %(levelname)s - %(message)s')
+
+@app.before_request
+def log_request_info():
+    logging.info(f"Request: {request.method} {request.path}")
+
+@app.after_request
+def log_response_info(response):
+    logging.info(f"Response: {response.status} for {request.path}")
+    return response
+
 app.secret_key = os.urandom(24)
 
 # In-memory user storage (for demonstration only)
