@@ -9,3 +9,9 @@ SonarQube Scanner
 Dependency
 
 Tools -> Dependency->DP-Check-installation-automatic
+Systems->SonarQube installations->Name->sonar-server->Server authentication token->Sonar-token
+Administration-Configuration->Webhooks->Create->Name->jenkins-sonar-webhoook->URL->http://65.2.137.252:8080/sonarqube-webhook
+
+cd /var/lib/jenkins/workspace
+ls -lh trivy-image-report.html
+
