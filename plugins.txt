@@ -14,7 +14,7 @@ Administration-Configuration->Webhooks->Create->Name->jenkins-sonar-webhoook->UR
 
 cd /var/lib/jenkins/workspace
 ls -lh trivy-image-report.html
-
+fced1112-82b8-4bf4-85a6-9737985d0ac9
 npm install -g snyk
 npm install -g snyk-to-html
 
