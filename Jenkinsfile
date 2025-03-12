@@ -23,12 +23,6 @@ pipeline {
             }
         }
 
-        stage('Checkout Code') {
-            steps {
-                git credentialsId: 'your-credentials-id', branch: 'main', url: 'https://github.com/Manohar-1305/course-content.git'
-            }
-        }
-
         stage('Install python3-venv') {
             steps {
                 script {
@@ -55,12 +49,14 @@ pipeline {
                 }
             }
         }
+
         stage('OWASP FS Scan') {
             steps {
                 dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
                 dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
             }
         }
+
         stage('Run Unit Tests') {
             steps {
                 script {
@@ -68,29 +64,20 @@ pipeline {
                 }
             }
         }
-stage('Debug Sonar Path') {
-    steps {
-        script {
-            sh 'echo "SONAR_SCANNER_HOME is: $SONAR_SCANNER_HOME"'
-            sh 'ls -l $SONAR_SCANNER_HOME/bin'
-        }
-    }
-}
 
-stage('SonarQube Analysis') {
-    steps {
-        withSonarQubeEnv('sonar-server') {
-            script {
-                sh '''
-                /opt/sonar-scanner/bin/sonar-scanner \
-                -Dsonar.projectName=Flaskapp \
-                -Dsonar.projectKey=Flaskapp
-                '''
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('sonar-server') {
+                    script {
+                        sh '''
+                        /opt/sonar-scanner/bin/sonar-scanner \
+                        -Dsonar.projectName=Flaskapp \
+                        -Dsonar.projectKey=Flaskapp
+                        '''
+                    }
+                }
             }
         }
-    }
-}
-
 
         stage('Quality Gate') {
             steps {
@@ -116,6 +103,28 @@ stage('SonarQube Analysis') {
             }
         }
 
+        stage('Snyk Security Scan') {
+            steps {
+                script {
+                    withCredentials([string(credentialsId: 'Snyk-Token', variable: 'SNYK_TOKEN')]) {
+                        sh '''
+                        snyk auth $SNYK_TOKEN
+                        snyk container test $IMAGE_NAME:$IMAGE_TAG --severity-threshold=high --json > snyk-report.json
+                        snyk-to-html -i snyk-report.json -o snyk-report.html
+                        '''
+                    }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'snyk-report.json, snyk-report.html', fingerprint: true
+                }
+                failure {
+                    echo "Snyk scan failed! Check snyk-report.json for details."
+                }
+            }
+        }
+
         stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
@@ -127,7 +136,7 @@ stage('SonarQube Analysis') {
                 }
             }
         }
-        // New Stage to Run Docker Container
+
         stage('Run Docker Container') {
             steps {
                 script {
@@ -137,6 +146,7 @@ stage('SonarQube Analysis') {
                 }
             }
         }
+
         stage('Prune Docker Images') {
             steps {
                 script {
