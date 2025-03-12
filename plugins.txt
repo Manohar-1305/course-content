@@ -15,3 +15,14 @@ Administration-Configuration->Webhooks->Create->Name->jenkins-sonar-webhoook->UR
 cd /var/lib/jenkins/workspace
 ls -lh trivy-image-report.html
 
+npm install -g snyk
+npm install -g snyk-to-html
+
+export PATH=$PATH:$HOME/.npm-global/bin
+snyk --version
+snyk container test course-web-app:v3 --severity-threshold=high --json > snyk-report.json
+snyk-to-html -i snyk-report.json -o snyk-report.html
+
+
+
+
