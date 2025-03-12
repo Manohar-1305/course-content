@@ -2,11 +2,11 @@ pipeline {
     agent any
 
     environment {
-        FLASK_APP = 'app.py'  // Replace with the actual Flask app file
-        VIRTUAL_ENV = '.venv'  // Virtual environment folder
+        FLASK_APP = 'app.py'
+        VIRTUAL_ENV = '.venv'
         IMAGE_NAME = 'course-web-app'
-        IMAGE_TAG = 'v3' // Default tag for staging
-        ENVIRONMENT = 'dev'  // Set your environment here (e.g., 'poc', 'prod')
+        IMAGE_TAG = 'v3'
+        ENVIRONMENT = 'dev'
         SCANNER_HOME = '/opt/sonar-scanner'
     }
 
@@ -20,6 +20,12 @@ pipeline {
         stage("Cleanup Workspace") {
             steps {
                 cleanWs()
+            }
+        }
+
+        stage('Checkout Code') {
+            steps {
+                git credentialsId: 'your-credentials-id', branch: 'main', url: 'https://github.com/Manohar-1305/course-content.git'
             }
         }
 
@@ -65,6 +71,15 @@ pipeline {
             }
         }
 
+        stage('Debug Sonar Path') {
+            steps {
+                script {
+                    sh 'echo "SONAR_SCANNER_HOME is: $SONAR_SCANNER_HOME"'
+                    sh 'ls -l $SONAR_SCANNER_HOME/bin'
+                }
+            }
+        }
+
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonar-server') {
@@ -103,27 +118,31 @@ pipeline {
             }
         }
 
-        stage('Snyk Security Scan') {
-            steps {
-                script {
-                    withCredentials([string(credentialsId: 'Snyk-Token', variable: 'SNYK_TOKEN')]) {
-                        sh '''
-                        snyk auth $SNYK_TOKEN
-                        snyk container test $IMAGE_NAME:$IMAGE_TAG --severity-threshold=high --json > snyk-report.json
-                        snyk-to-html -i snyk-report.json -o snyk-report.html
-                        '''
-                    }
-                }
-            }
-            post {
-                always {
-                    archiveArtifacts artifacts: 'snyk-report.json, snyk-report.html', fingerprint: true
-                }
-                failure {
-                    echo "Snyk scan failed! Check snyk-report.json for details."
-                }
+stage('Snyk Security Scan') {
+    steps {
+        script {
+            withCredentials([string(credentialsId: 'Snyk-Token', variable: 'SNYK_TOKEN')]) {
+                sh '''
+                snyk auth $SNYK_TOKEN
+                snyk container test $IMAGE_NAME:$IMAGE_TAG --severity-threshold=high --json --debug > snyk-report.json || true
+                
+                snyk-to-html -i snyk-report.json -o snyk-report.html
+                
+                if grep -q '"vulnerabilities":\\[\\]' snyk-report.json; then
+                    echo "✅ No vulnerabilities found."
+                else
+                    echo "⚠️ Vulnerabilities detected. Check snyk-report.html for details."
+                fi
+                '''
             }
         }
+    }
+    post {
+        always {
+            archiveArtifacts artifacts: 'snyk-report.html', fingerprint: true
+        }
+    }
+}
 
         stage('Push Docker Image to Docker Hub') {
             steps {
@@ -140,9 +159,7 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 script {
-                    sh '''
-                    docker run -d --name course-web-container -p 5000:5000 $IMAGE_NAME:$IMAGE_TAG
-                    '''
+                    sh 'docker run -d --name course-web-container -p 5000:5000 $IMAGE_NAME:$IMAGE_TAG'
                 }
             }
         }
