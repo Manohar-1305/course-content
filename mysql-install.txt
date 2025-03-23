@@ -1,0 +1,13 @@
+sudo apt install mysql-server -y
+sudo systemctl start mysqld
+sudo systemctl enable mysqld
+sudo systemctl status mysqld
+sudo mysql_secure_installation
+sudo mysql -u root -p
+CREATE USER 'admin'@'%' IDENTIFIED BY 'admin123';
+GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+EXIT;
+sudo vi /etc/mysql/mysql.conf.d/mysqld.cnf
+bind-address = 0.0.0.0
+sudo systemctl restart mysqld
