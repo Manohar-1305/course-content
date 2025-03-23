@@ -14,7 +14,7 @@ app = Flask(__name__)
 DB_USER = os.getenv("DB_USER", "admin")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "your_password")
 DB_HOST = os.getenv("DB_HOST", "your-ec2-ip")  # Use EC2 private/public IP
-DB_NAME = os.getenv("DB_NAME", "db_name")
+DB_NAME = os.getenv("DB_NAME", "course_db")
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
