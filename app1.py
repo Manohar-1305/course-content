@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import os
 import pymysql
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask import flash, redirect, render_template, request, url_for
 import logging
 app = Flask(__name__)
@@ -19,10 +20,21 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
+admin = User(name="admin", password=generate_password_hash("password123"), role="admin")
+db.session.add(admin)
+db.session.commit()
+
 # User model example
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False, unique=True)
+    password = db.Column(db.String(255), nullable=False)  # Store hashed password
+    role = db.Column(db.String(50), nullable=False, default='user')  # 'admin' or 'user'
+
   
 @app.route('/')
 def home():
@@ -56,15 +68,26 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        # Simple authentication
-        users = {"admin": "password123"}  # Consider using a database
-        if username in users and users[username] == password:
+        user = User.query.filter_by(name=username).first()
+
+        if user and check_password_hash(user.password, password):
             session['username'] = username
+            session['role'] = user.role  # Store role in session
+            if user.role == "admin":
+                return redirect(url_for('admin_dashboard'))
             return redirect(url_for('welcome'))
         else:
             flash('Invalid username or password.', 'danger')
 
     return render_template('login.html')
+
+@app.route('/admin_dashboard')
+def admin_dashboard():
+    if 'username' not in session or session.get('role') != 'admin':
+        flash('Access denied!', 'danger')
+        return redirect(url_for('login'))
+    
+    return render_template('admin_dashboard.html', username=session['username'])
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
