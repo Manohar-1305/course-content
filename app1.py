@@ -10,10 +10,10 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
-# Database Configuration
+# Database configuration
 DB_USER = os.getenv("DB_USER", "admin")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "your_password")
-DB_HOST = os.getenv("DB_HOST", "your-ec2-ip")  # EC2 private/public IP
+DB_HOST = os.getenv("DB_HOST", "your-ec2-ip")  # Use EC2 private/public IP
 DB_NAME = os.getenv("DB_NAME", "db_name")
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}'
@@ -21,27 +21,35 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-# User Model
+# User model
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False)  # Store hashed password
     role = db.Column(db.String(50), nullable=False, default='user')  # 'admin' or 'user'
 
-# Create Database Tables
-with app.app_context():
-    db.create_all()
+# Function to create admin user
+def create_admin():
+    with app.app_context():
+        db.create_all()  # Ensure the database and tables exist
 
-    # Add Admin User (only if not exists)
-    if not User.query.filter_by(name="admin").first():
-        admin = User(name="admin", password=generate_password_hash("password123"), role="admin")
-        db.session.add(admin)
-        db.session.commit()
+        admin_user = User.query.filter_by(name="admin").first()
+        if not admin_user:
+            hashed_password = generate_password_hash("admin123", method="pbkdf2:sha256")
+            admin = User(name="admin", password=hashed_password, role="admin")
+            db.session.add(admin)
+            db.session.commit()
+            print("✅ Admin user created: username='admin', password='admin123'")
+        else:
+            print("✅ Admin user already exists.")
 
+# Run admin creation before starting app
+create_admin()
+
+# Home Route
 @app.route('/')
 def home():
     return "Connected to MySQL Database!"
-
 # Configure logging
 logging.basicConfig(filename='app.log', level=logging.INFO, 
                     format='%(asctime)s - %(levelname)s - %(message)s')
@@ -90,18 +98,26 @@ def admin_dashboard():
         return redirect(url_for('login'))
     
     return render_template('admin_dashboard.html', username=session['username'])
-
+# User Registration Route
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        if username in users:
-            flash('Username already exists. Choose a different username.', 'danger')  # 'danger' for error
-        else:
-            users[username] = password
-            flash('Registration successful! You can now log in.', 'success')
-            return redirect(url_for('login'))
+
+        # Check if username already exists
+        existing_user = User.query.filter_by(name=username).first()
+        if existing_user:
+            flash("Username already taken. Try another.", "danger")
+            return redirect(url_for('register'))
+
+        hashed_password = generate_password_hash(password, method="pbkdf2:sha256")
+        new_user = User(name=username, password=hashed_password, role="user")
+        db.session.add(new_user)
+        db.session.commit()
+        flash("Registration successful! You can now log in.", "success")
+        return redirect(url_for('home'))
+
     return render_template('register.html')
 
 @app.route('/welcome', methods=['GET', 'POST'])
