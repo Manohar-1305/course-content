@@ -10,9 +10,10 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
+# Database Configuration
 DB_USER = os.getenv("DB_USER", "admin")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "your_password")
-DB_HOST = os.getenv("DB_HOST", "your-ec2-ip")  # Use EC2 private/public IP
+DB_HOST = os.getenv("DB_HOST", "your-ec2-ip")  # EC2 private/public IP
 DB_NAME = os.getenv("DB_NAME", "db_name")
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}'
@@ -20,22 +21,23 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-admin = User(name="admin", password=generate_password_hash("password123"), role="admin")
-db.session.add(admin)
-db.session.commit()
-
-# User model example
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-
+# User Model
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False)  # Store hashed password
     role = db.Column(db.String(50), nullable=False, default='user')  # 'admin' or 'user'
 
-  
+# Create Database Tables
+with app.app_context():
+    db.create_all()
+
+    # Add Admin User (only if not exists)
+    if not User.query.filter_by(name="admin").first():
+        admin = User(name="admin", password=generate_password_hash("password123"), role="admin")
+        db.session.add(admin)
+        db.session.commit()
+
 @app.route('/')
 def home():
     return "Connected to MySQL Database!"
