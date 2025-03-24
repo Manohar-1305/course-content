@@ -1,6 +1,6 @@
 sudo apt update -y
 sudo apt install mysql-server -y
-sudo sed -i 's/^bind-address\s*=.*/bind-address = 0.0.0.0/' 
+sudo sed -i 's/^bind-address\s*=.*/bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf
 sudo systemctl start mysql
 sudo systemctl enable mysql
 sudo systemctl status mysql
