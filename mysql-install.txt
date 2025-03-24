@@ -1,16 +1,20 @@
 sudo apt install mysql-server -y
+sudo sed -i 's/^bind-address\s*=.*/bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf
 sudo systemctl start mysqld
 sudo systemctl enable mysqld
 sudo systemctl status mysqld
+
 sudo mysql_secure_installation
+
 sudo mysql -u root -p
 CREATE DATABASE course_db;
-CREATE USER 'admin'@'%' IDENTIFIED BY 'admin123';
-GRANT ALL PRIVILEGES ON course_db.* TO 'admin'@'%' WITH GRANT OPTION;
+CREATE USER 'admin_user'@'%' IDENTIFIED BY 'admin123';
+GRANT ALL PRIVILEGES ON course_db.* TO 'admin_user'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
 USE course_db;
 FLUSH PRIVILEGES;
 EXIT;
-sudo sed -i 's/^bind-address\s*=.*/bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf
+
 sudo vi /etc/mysql/mysql.conf.d/mysqld.cnf
 bind-address = 0.0.0.0
 sudo systemctl restart mysqld
