@@ -1,5 +1,6 @@
+sudo apt update -y
 sudo apt install mysql-server -y
-sudo sed -i 's/^bind-address\s*=.*/bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf
+sudo sed -i 's/^bind-address\s*=.*/bind-address = 0.0.0.0/' 
 sudo systemctl start mysql
 sudo systemctl enable mysql
 sudo systemctl status mysql
@@ -17,6 +18,12 @@ EXIT;
 
 sudo vi /etc/mysql/mysql.conf.d/mysqld.cnf
 bind-address = 0.0.0.0
-sudo systemctl restart mysqld
+sudo systemctl restart mysql
+------------------------------------
+sudo mysql -u root -p
+CREATE DATABASE myappdb;
+CREATE USER 'myappuser'@'%' IDENTIFIED BY 'mypassword';
+GRANT ALL PRIVILEGES ON myappdb.* TO 'myappuser'@'%';
+FLUSH PRIVILEGES;
 
 
