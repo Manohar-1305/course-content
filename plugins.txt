@@ -27,6 +27,19 @@ snyk --version
 snyk container test course-web-app:v3 --severity-threshold=high --json > snyk-report.json
 snyk-to-html -i snyk-report.json -o snyk-report.html
 
+# Install Node.js if not already installed
+sudo apt update
+sudo apt install -y nodejs npm
+# Install Snyk using npm
+npm install -g snyk
+
+# Download the latest Snyk CLI binary
+curl -Lo snyk "https://static.snyk.io/cli/latest/snyk-linux"
+# Make it executable
+chmod +x snyk
+# Move it to a location in your PATH
+sudo mv snyk /usr/local/bin
+snyk --version
 
 
 
