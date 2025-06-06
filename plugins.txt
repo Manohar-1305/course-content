@@ -6,7 +6,7 @@ Workspace Cleanup
 Snyk Security
 Pipeline Utility Steps
 SonarQube Scanner
-Dependency
+OWASP Dependency-Check
 
 Install 
 sonarqube
