@@ -1,0 +1,30 @@
+🖥️ Step 1: Update System and Install GUI
+sudo apt update
+sudo apt upgrade -y
+sudo apt install -y xfce4 xfce4-goodies
+
+🔑 Step 2: Install and Configure VNC Server
+sudo apt install -y tightvncserver
+
+- Start VNC for the first time and set a password:
+vncserver
+- Then stop the VNC server to configure it:
+vncserver -kill :1
+
+🛠️ Step 3: Configure the VNC Startup Script
+Create/edit the ~/.vnc/xstartup file:
+cat > ~/.vnc/xstartup <<EOF
+#!/bin/bash
+xrdb $HOME/.Xresources
+startxfce4 &
+EOF
+
+chmod +x ~/.vnc/xstartup
+
+🚀 Step 4: Start the VNC Server
+vncserver :1
+- This will start VNC on port 5901 (since :1 = 5900 + 1)
+
+🧹 Optional: Install Firefox (GUI browser)
+sudo apt install -y firefox
+ - You can now open Firefox inside the remote desktop session.
