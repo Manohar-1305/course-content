@@ -2,7 +2,7 @@ Docker Commons
 Docker Pipeline
 Pipeline: Stage View 
 Web for Blue Ocean
-Workspace Cleanup 
+Distributed Workspace Clean
 Snyk Security
 Pipeline Utility Steps
 SonarQube Scanner
@@ -39,6 +39,10 @@ curl -Lo snyk "https://static.snyk.io/cli/latest/snyk-linux"
 chmod +x snyk
 sudo mv snyk /usr/local/bin
 snyk --version
+
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
 
  apt install npm -y
 npm install -g snyk-to-html -y
