@@ -40,5 +40,6 @@ chmod +x snyk
 sudo mv snyk /usr/local/bin
 snyk --version
 
+https://app.snyk.io/account
 
 
