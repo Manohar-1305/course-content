@@ -40,6 +40,8 @@ chmod +x snyk
 sudo mv snyk /usr/local/bin
 snyk --version
 
+ apt install npm -y
+npm install -g snyk-to-html -y
 https://app.snyk.io/account
 
 
