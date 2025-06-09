@@ -14,9 +14,7 @@ Synk
 
 Tools -> Dependency->DP-Check-installation-automatic
 Systems->SonarQube installations->Name->sonar-server->Server authentication token->Sonar-token
-Manage Jenkins → Configure System → SonarQube
-Add http://65.2.184.54:9000 
-Add Key - Name=> sonar-server => Server URL => Server authentication token => Add - Select a  token or create a new token-> Sonarqube URL-> Adminstartion -> Security -> User -> Create a new token - Take token -> and create a secret in jenkins.
+Manage Jenkins → Configure System → SonarQube=> SonarQube installations=>  Name=> sonar-server => Server URL =>http://65.2.184.54:9000=> Server authentication token => Add - Select a  token or create a new token-> Sonarqube URL-> Administration-Configuration-> Security -> User -> Create a new token - Take token -> and create a secret in jenkins.
 Administration-Configuration->Webhooks->Create->Name->jenkins-sonar-webhoook->URL->http://65.2.137.252:8080/sonarqube-webhook
 
 cd /var/lib/jenkins/workspace
@@ -38,9 +36,7 @@ npm install -g snyk
 
 # Download the latest Snyk CLI binary
 curl -Lo snyk "https://static.snyk.io/cli/latest/snyk-linux"
-# Make it executable
 chmod +x snyk
-# Move it to a location in your PATH
 sudo mv snyk /usr/local/bin
 snyk --version
 
