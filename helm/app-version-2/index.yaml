@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  course-website:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2025-06-14T04:43:47.957038506Z"
+    description: A Helm chart for Kubernetes
+    digest: d04a2c10e8605fecd360fd622585737789386ac85c023a1ac48d93b6d7af6831
+    name: course-website
+    type: application
+    urls:
+    - https://raw.githubusercontent.com/Manohar-1305/course-content/main/helm/course-website-0.1.0.tgz
+    version: 0.1.0
+generated: "2025-06-14T04:43:47.956267122Z"
