@@ -1,0 +1,27 @@
+apiVersion: v1
+entries:
+  course-website:
+    - apiVersion: v2
+      name: course-website
+      version: 0.1.0
+      description: "Course Website Helm Chart Version 0.1.0"
+      urls:
+        - https://github.com/Manohar-1305/course-content/raw/main/helm/course-website-0.1.0.tgz
+      created: "2025-01-31T00:00:00Z"
+      digest: ""
+    - apiVersion: v2
+      name: course-website
+      version: 0.2.0
+      description: "Course Website Helm Chart Version 0.2.0"
+      urls:
+        - https://github.com/Manohar-1305/course-content/raw/main/helm/course-website-0.2.0.tgz
+      created: "2025-01-31T00:00:00Z"
+      digest: ""
+    - apiVersion: v2
+      name: course-website
+      version: 0.3.0
+      description: "Course Website Helm Chart Version 0.3.0"
+      urls:
+        - https://github.com/Manohar-1305/course-content/raw/main/helm/course-website-0.3.0.tgz
+      created: "2025-01-31T00:00:00Z"
+      digest: ""
