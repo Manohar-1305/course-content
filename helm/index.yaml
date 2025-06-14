@@ -3,24 +3,25 @@ entries:
   course-content:
     - apiVersion: v2
       name: course-content
-      version: 0.1.0
-      description: Course Content Helm Chart Version 0.1.0
+      version: 0.3.0
+      description: "Course Content Helm Chart Version 0.3.0"
       urls:
-        - https://raw.githubusercontent.com/Manohar-1305/course-content/main/helm/course-content-0.1.0.tgz
+        - https://raw.githubusercontent.com/Manohar-1305/course-content/main/helm/app-version-3/course-content-0.3.0.tgz
       created: "2025-06-14T00:00:00Z"
-
+      digest: ""
     - apiVersion: v2
       name: course-content
       version: 0.2.0
-      description: Course Content Helm Chart Version 0.2.0
+      description: "Course Content Helm Chart Version 0.2.0"
       urls:
-        - https://raw.githubusercontent.com/Manohar-1305/course-content/main/helm/course-content-0.2.0.tgz
+        - https://raw.githubusercontent.com/Manohar-1305/course-content/main/helm/app-version-2/course-content-0.2.0.tgz
       created: "2025-06-14T00:00:00Z"
-
+      digest: ""
     - apiVersion: v2
       name: course-content
-      version: 0.3.0
-      description: Course Content Helm Chart Version 0.3.0
+      version: 0.1.0
+      description: "Course Content Helm Chart Version 0.1.0"
       urls:
-        - https://raw.githubusercontent.com/Manohar-1305/course-content/main/helm/course-content-0.3.0.tgz
+        - https://raw.githubusercontent.com/Manohar-1305/course-content/main/helm/app-version-1/course-content-0.1.0.tgz
       created: "2025-06-14T00:00:00Z"
+      digest: ""
