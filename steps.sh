@@ -29,6 +29,9 @@ WantedBy=multi-user.target
 EOF'
 
 
+sudo chown -R ubuntu:ubuntu /home/ubuntu/app
+sudo chmod -R 755 /home/ubuntu/app
+
 sudo systemctl daemon-reload
 sudo systemctl enable flaskapp.service
 sudo systemctl start flaskapp.service
