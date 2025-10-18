@@ -11,10 +11,9 @@ git clone https://github.com/Manohar-1305/course-content.git
 cd course-content
 pip install -r /home/ubuntu/app/course-content/requirements.txt
 
-vi /etc/systemd/system/flaskapp.service
-
+sudo bash -c 'cat <<EOF > /etc/systemd/system/flaskapp.service
 [Unit]
-Description=flask app
+Description=Flask App
 After=network.target
 
 [Service]
@@ -23,9 +22,12 @@ Group=ubuntu
 WorkingDirectory=/home/ubuntu/app/course-content
 Environment="PATH=/home/ubuntu/app/venv/bin"
 ExecStart=/home/ubuntu/app/venv/bin/python3 /home/ubuntu/app/course-content/app.py
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
+EOF'
+
 
 sudo systemctl daemon-reload
 sudo systemctl enable flaskapp.service
